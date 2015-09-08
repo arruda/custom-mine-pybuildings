@@ -45,23 +45,6 @@ class TestBaseBuilder(unittest.TestCase):
         self.assertEquals(level, 'some_level')
         mclevel.fromFile.assert_called_once_with(level_path)
 
-
-    # def prepare_stage(self):
-    #     """
-    #     ensure chunks in given size, considering init_pos, do exist
-    #     and their chunk positions (also set as `self.chunk_positions`)
-    #     """
-    #     if self.init_pos is None or self.level is None:
-    #         return
-
-    #     x, y, z = self.init_pos
-
-    #     bbox = BoundingBox(origin=(x, y, z), size=self.size)
-    #     chunk_positions = bbox.chunkPositions
-    #     self.level.createChunksInBox(bbox)
-    #     self.chunk_positions = chunk_positions
-    #     return chunk_positions
-
     def test_prepare_stage_should_return_none_if_no_init_pos_or_level_is_set(self):
         init_pos = [-269, 4, 1584]
         b = BaseBuilder(level_path=None, init_pos=init_pos)
@@ -91,6 +74,14 @@ class TestBaseBuilder(unittest.TestCase):
         customine.base.BoundingBox.assert_called_once_with(
             origin=tuple(init_pos), size=size
         )
+
+    @patch('customine.base.BaseBuilder.load_level', Mock())
+    @patch('customine.base.BaseBuilder.prepare_stage', Mock())
+    def test_prepare_all_should_load_level_and_prepare_stage(self):
+        bb = BaseBuilder(level_path=None)
+        bb.prepare_all()
+        BaseBuilder.load_level.assert_called_once_with()
+        BaseBuilder.prepare_stage.assert_called_once_with()
 
     def tearDown(self):
         # ensure the file locks are closed
