@@ -83,6 +83,23 @@ class TestBaseBuilder(unittest.TestCase):
         BaseBuilder.load_level.assert_called_once_with()
         BaseBuilder.prepare_stage.assert_called_once_with()
 
+    def test_change_block_at_should_change_id_and_data_correctly(Self):
+        bb = BaseBuilder(level_path=None)
+
+        x, y, z = [1, 2, 3]
+        block_id = 'id'
+        block_data = 'data'
+
+        bb.level = Mock()
+        bb.level.setBlockAt = Mock()
+        bb.level.setBlockDataAt = Mock()
+
+        bb.change_block_at(x=x, y=y, z=z, block_id=block_id, block_data=block_data)
+
+        bb.level.setBlockAt.assert_called_once_with(x, y, z, block_id)
+        bb.level.setBlockDataAt.assert_called_once_with(x, y, z, block_data)
+
+
     def tearDown(self):
         # ensure the file locks are closed
         # self.test_level.close()
